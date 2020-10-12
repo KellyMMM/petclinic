@@ -1,12 +1,32 @@
-mysql:
-  image: mysql:5.7
-  ports:
-    - "3306:3306"
-  environment:
-    - MYSQL_ROOT_PASSWORD=
-    - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    - MYSQL_USER=petclinic
-    - MYSQL_PASSWORD=petclinic
-    - MYSQL_DATABASE=petclinic
-  volumes:
-    - "./conf.d:/etc/mysql/conf.d:ro"
+#the docker compose file version
+version: "3"
+# you can run multiple services inside one docker compose file
+# define them with their dependencies one after the other
+services:
+  # service 1 container name
+  jenkins:
+    container_name: jenkins
+    image: jenkins/jenkins
+    ports:
+      - "8080:8080"
+    networks:
+     - net      
+    volumes:
+      - “$PWD/jenkins_home:/var/jenkins_home”
+      - “/var/run/docker.sock:/var/run/docker.sock”
+  # service 2 container name    
+  sonarqube:
+    container_name: sonarqube
+    image: sonarqube:latest
+    hostname: sonarqube
+    expose:
+      - 9000
+    ports:
+      - 9000:9000
+    networks:
+      - net
+    volumes:
+     - “$PWD/sonarqube/logs:/opt/sonarqube/logs”
+     - “$PWD/sonarqube/data:/opt/sonarqube/data”
+     - “$PWD/sonarqube/extensions:/opt/sonarqube/extensions”
+     - “$PWD/sonarqube/lib/bundled-plugins:/opt/sonarqube/lib/bundled-plugins”
